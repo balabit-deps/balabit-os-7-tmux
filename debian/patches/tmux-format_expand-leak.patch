@@ -1,0 +1,32 @@
+Description: Do not leak memory when working out job name in formats.
+Origin: upstream, https://github.com/tmux/tmux/commit/ab6f0bb3485f6626bad6f585e4d17059fe4f7152
+Bug-Ubuntu: https://bugs.launchpad.net/ubuntu/+source/tmux/+bug/1835439
+Last-Update: 2019-07-04
+---
+This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
+
+--- a/format.c
++++ b/format.c
+@@ -1102,7 +1102,7 @@
+ char *
+ format_expand(struct format_tree *ft, const char *fmt)
+ {
+-	char		*buf, *out;
++	char		*buf, *out, *name;
+ 	const char	*ptr, *s, *saved = fmt;
+ 	size_t		 off, len, n, outlen;
+ 	int     	 ch, brackets;
+@@ -1141,8 +1141,11 @@
+ 
+ 			if (ft->flags & FORMAT_NOJOBS)
+ 				out = xstrdup("");
+-			else
+-				out = format_job_get(ft, xstrndup(fmt, n));
++			else {
++				name = xstrndup(fmt, n);
++				out = format_job_get(ft, name);
++				free(name);
++			}
+ 			outlen = strlen(out);
+ 
+ 			while (len - off < outlen + 1) {

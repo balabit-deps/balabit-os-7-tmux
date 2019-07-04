@@ -1,0 +1,26 @@
+Description: Fix memory leak in screen_redraw_make_pane_status.
+Origin: upstream, https://github.com/tmux/tmux/commit/c363c236aaea5b7a879493d8f3c85bead546f063
+Bug-Ubuntu: https://bugs.launchpad.net/ubuntu/bionic/+source/tmux/+bug/1766942
+Last-Update: 2018-10-29
+---
+This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
+diff --git a/screen-redraw.c b/screen-redraw.c
+index 6c4d84d..6a8b4f2 100644
+--- a/screen-redraw.c
++++ b/screen-redraw.c
+@@ -18,6 +18,7 @@
+ 
+ #include <sys/types.h>
+ 
++#include <stdlib.h>
+ #include <string.h>
+ 
+ #include "tmux.h"
+@@ -299,6 +300,7 @@ screen_redraw_make_pane_status(struct client *c, struct window *w,
+ 	screen_write_cnputs(&ctx, outlen, &gc, "%s", out);
+ 	screen_write_stop(&ctx);
+ 
++	free(out);
+ 	format_free(ft);
+ 
+ 	wp->status_size = outlen;
