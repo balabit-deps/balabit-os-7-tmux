@@ -1,3 +1,12 @@
+tmux (2.6-3ubuntu0.3) bionic-security; urgency=medium
+
+  * SECURITY UPDATE: Null dereference
+    - debian/patches/CVE-2022-47016.patch: adds checks for NULL
+      returns from bufferevent_new in window.c.
+    - CVE-2022-47016
+
+ -- Leonidas Da Silva Barbosa <leo.barbosa@canonical.com>  Tue, 31 Jan 2023 11:04:01 -0300
+
 tmux (2.6-3ubuntu0.2) bionic; urgency=medium
 
   * d/p/tmux-format_expand-leak.patch: Do not leak memory when working out job
